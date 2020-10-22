@@ -1,6 +1,8 @@
 package com.example.foodrecipies;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -11,6 +13,7 @@ import com.example.foodrecipies.requests.RecipeApi;
 import com.example.foodrecipies.requests.ServiceGenerator;
 import com.example.foodrecipies.requests.responses.RecipeResponse;
 import com.example.foodrecipies.requests.responses.RecipeSearchResponse;
+import com.example.foodrecipies.viewmodels.RecipeListViewModel;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -24,20 +27,25 @@ public class RecipeListActivity extends BaseActivity {
 
     private static final String TAG = "RecipeListActivity";
 
+    private RecipeListViewModel recipeListViewModel;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recipe_list);
 
-        findViewById(R.id.test).setOnClickListener(new View.OnClickListener() {
+        recipeListViewModel = new ViewModelProvider(this,
+                ViewModelProvider.AndroidViewModelFactory.getInstance(this.getApplication())).get(RecipeListViewModel.class);
+
+
+        subscribeObserver();
+    }
+
+    private void subscribeObserver() {
+        recipeListViewModel.getRecipes().observe(this, new Observer<List<Recipe>>() {
             @Override
-            public void onClick(View v) {
-//                if (progressBar.getVisibility() == View.VISIBLE) {
-//                    showProgressBar(false);
-//                } else {
-//                    showProgressBar(true);
-//                }
-                testRetrofitRequest();
+            public void onChanged(List<Recipe> recipes) {
+
             }
         });
     }
